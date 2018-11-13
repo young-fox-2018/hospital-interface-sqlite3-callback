@@ -58,6 +58,37 @@ class Controller {
             }
         })
     }
+
+    static logout(){
+        Employees.findOne({
+            field: "loggedIn",
+            value: 1
+        },function(err,data){
+            if(err){
+                View.displayError(err)
+            }
+            else{
+                if(data === undefined){
+                    View.displayError("You already logged out")
+                }
+                else{
+
+                    Employees.updateData({
+                        id : data.id,
+                        field : "loggedIn",
+                        value : 0
+                    }, function(err){
+                        if(err){
+                            View.displayError(err)
+                        }
+                        else{
+                            View.displaySuccess(`{Message: sucessfully logged out}`)
+                        }
+                    })
+                }
+            }
+        })
+    }
 }
 
 module.exports = Controller;

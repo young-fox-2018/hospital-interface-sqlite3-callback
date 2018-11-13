@@ -18,6 +18,10 @@ switch (argv[0]) {
         Controller.addPatient(argv[1], argv.slice(2).join(" "))
         break;
 
+    case "logout":
+        Controller.logout()
+        break;
+
     default:
         break;
 }
