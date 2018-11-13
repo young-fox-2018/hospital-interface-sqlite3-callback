@@ -10,7 +10,9 @@ class View {
     }
 
     static showList(arr) {
-        console.log(arr)
+        arr.forEach(item => {
+            console.log(item)
+        })
     }
 
 }
