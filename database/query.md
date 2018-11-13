@@ -1,0 +1,15 @@
+// TABLE Employees
+
+```sql
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL,
+position TEXT NOT NULL,
+username TEXT NOT NULL,
+password TEXT NOT NULL,
+status INTEGER
+
+//TABLE Patients
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name TEXT NOT NULL,
+diagnosis TEXT NOT NULL
+
