@@ -20,22 +20,37 @@ class ControllerEmployee {
 
     static register(name,position,username,password){
         let newEmp = new ModelEmployee(name,position,username,password)
-        let qInsert = `INSERT INTO Employees(name,position,username,password,islogin)
-                        VALUES("${newEmp.name}","${newEmp.position}","${newEmp.name}","${newEmp.password}",0)
-                        `
-        ModelEmployee.run(qInsert,function(err,data){
-            if(err){
+
+        let options = {
+            username: username
+        }
+
+        ModelEmployee.findOne(options,function(err,data){
+            if(err) {
                 View.displayError({
-                    message: "error register data",
+                    message: "error read data Employees",
                     err: err
                 })
-            } else{
-                ModelEmployee.getAllData("SELECT * FROM Employees",function(err,data2){
-                    View.displayData(`save data success ${JSON.stringify(newEmp)}.Total employee : ${data2.length}`)
-                })
+            } else {
+                if(data){
+                    View.displayError("Username sudah ada")
+                } else {
+                    ModelEmployee.create(newEmp.name,newEmp.password,newEmp.position,function(err){
+                        if(err){
+                            View.displayError(err)
+                        } else {
+                            ModelEmployee.getAllData(function(err,data){
+                                if(err){
+                                    View.displayError(err)
+                                } else {
+                                    View.displayData(`save data success ${JSON.stringify(newEmp)}. Total employee : ${data.length}`)
+                                }
+                            })
+                        }
+                    })
+                }
             }
         })
-
     }
 
     static login(username,password){
@@ -48,7 +63,10 @@ class ControllerEmployee {
                 View.displayError(err)
             } else {
                 if(data){
-                    ModelPatient.run(`UPDATE Employees SET isLogin = 1 WHERE username = "${username}" AND password = "${password}"`,function(err,data){
+                    let option2 = {
+                        isLogin : 1
+                    }
+                    ModelEmployee.update(data.id,option2,function(err){
                         if(err){
                             View.displayError("error update table",err)
                         } else {
@@ -74,15 +92,16 @@ class ControllerEmployee {
                 View.displayError(err)
             } else {
                 if(data){
-                    let qInsert = `INSERT INTO Patients(name,diagnosis)
-                        VALUES("${newPatient.name}","${newPatient.diagnosis}")
-                        `
-                    ModelPatient.run(qInsert,function(err,data){
+                    ModelPatient.create(newPatient.name,newPatient.diagnosis,function(err){
                         if(err){
                             View.displayError(err)
                         } else {
-                            ModelPatient.getAllData("SELECT * FROM Patients",function(err,data2){
-                                View.displayData(`data pasien berhasil ditambahkan. Total data pasien ${data2.length}`)
+                            ModelPatient.getAllData(function(err,data){
+                                if(err){
+                                    View.displayError(err)
+                                } else {
+                                    View.displayData(`data pasien berhasil ditambahkan. Total data pasien ${data.length}`)
+                                }
                             })
                         }
                     })
@@ -95,12 +114,3 @@ class ControllerEmployee {
 }
 
 module.exports = ControllerEmployee
-
-
-
-
-
-
-
-
-// View.displayError("tidak memiliki akses untuk add patient")

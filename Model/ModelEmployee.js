@@ -26,17 +26,19 @@ class Employee {
   //   })
   // }
 
-  static run(sql,callback){
-    db.run(sql,function(err,data){
+  static create(name,password,position,callback){
+    let qInsert = `INSERT INTO Employees(name,position,username,password,islogin)
+                  VALUES("${name}","${position}","${name}","${password}",0)
+                  `
+    
+    db.run(qInsert, function(err){
       if(err){
         callback(err)
       } else {
-        callback(null,data)
+        callback(null)
       }
     })
-    db.close()
   }
-
 
   static findOne(options,callback){
     let qFind = ``
@@ -58,15 +60,17 @@ class Employee {
         }
       }
     })
-    db.close()
   }
 
 
-  static getAllData(sql,callback){
-    db.all(sql,function(err,data){
-      callback(null,data)
+  static getAllData(callback){
+    db.all(`SELECT * FROM Employees`,function(err,data){
+      if(err){
+        callback(err)
+      } else{
+        callback(null,data)
+      }
     })
-    db.close()
   }
 
   // static login(username,password,callback){
@@ -100,8 +104,22 @@ class Employee {
   //   })
   // }
 
-  static update(sql,callback){
-
+  static update(id,options,callback){
+    let qFind = ``
+    for(let key in options){
+      if(typeof options[key] === 'number'){
+        qFind += `${key} = ${options[key]}`
+      } else {
+        qFind += `${key} = "${options[key]}"`
+      }
+    }
+    db.run(`UPDATE Employees SET ${qFind} WHERE id = ${id}`,function(err){
+      if(err){
+        callback(err)
+      } else {
+        callback(null)
+      }
+    })
   }
 
 }

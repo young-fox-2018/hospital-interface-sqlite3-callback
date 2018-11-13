@@ -8,43 +8,27 @@ class Patient {
     }
 
 
-    static run(sql,callback){
-        db.run(sql,function(err,data){
-          if(err){
-            callback(err)
-          } else {
-            callback(null,data)
-          }
-        })
-      }
-    
-    
-      static findOne(options,callback){
-        let qFind = ``
-        for(let key in options){
-          qFind += `${key} = "${options[key]}" AND `
+    static create(name,diagnosis,callback){
+      let qInsert = `INSERT INTO Patients(name,diagnosis)
+                    VALUES("${name}","${diagnosis}")
+                    `
+      db.run(qInsert, function(err){
+        if(err){
+          callback(err)
+        } else {
+          callback(null)
         }
-        db.get(`SELECT * FROM Patients WHERE ${qFind.slice(0,-4)}`,function(err,data){
-          if(err){
-            callback(err)
-          } else {
-            if(data){
-              callback(null,data)
-            } else {
-              callback(null,null)
-            }
-          }
-        })
-      }
-    
-    
-      static getAllData(sql,callback){
-        db.all(sql,function(err,data){
+      })
+    }
+
+    static getAllData(callback){
+      db.all(`SELECT * FROM Patients`,function(err,data){
+        if(err){
+          callback(err)
+        } else{
           callback(null,data)
-        })
-        db.close()
-      }
-}
-
-
+        }
+      })
+    }
+  }
 module.exports = Patient
