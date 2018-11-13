@@ -1,0 +1,23 @@
+{
+  "name": "hospital-interface-sqlite3-callback",
+  "version": "1.0.0",
+  "description": "Hospital interface",
+  "main": "index.js",
+  "dependencies": {
+    "sqlite3": "^4.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/young-fox-2018/hospital-interface-sqlite3-callback.git"
+  },
+  "author": "Desy Armariena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/young-fox-2018/hospital-interface-sqlite3-callback/issues"
+  },
+  "homepage": "https://github.com/young-fox-2018/hospital-interface-sqlite3-callback#readme"
+}
