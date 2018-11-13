@@ -21,11 +21,37 @@ class Controller {
         View.displayError(err)
       } else {
         if(data == undefined) {
-          View.displaySuc(`Password/ username salah `)
+          View.displaySuc(data)
         } else {
           View.displaySuc(`user ${data.username} logged in succesfully`)
         }
         
+      }
+    })
+  }
+
+  static addPatient(name , sick){
+    Employee.cekDokter(function(err) {
+      if(err){
+        View.displayError(err)
+      } else {
+        Patient.add(name, sick, function(err, data){
+          if(err){
+            View.displayError(err)
+          } else {
+            View.displaySuc(`Data pasien berhasil ditambahkan. Total pasien : ${data.length}`)
+          }
+        })
+      }
+    })
+  }
+
+  static logout(uname) {
+    Employee.logout(uname, function(err, dat) {
+      if(err) {
+        View.displayError(err)
+      } else {
+        View.displaySuc(`${dat.username} sudah logout`)
       }
     })
   }

@@ -61,28 +61,91 @@ class Employee {
     db.close()
   }
 
-  static getOne(param) {
-    db.get(`SELECT * FROM employees`)
+  static getOne(param, cb) {
+    db.get(`SELECT * FROM employees WHERE ${param.field} = "${param.value}"`, function(err, rows) {
+      if(err) {
+        cb(err)
+      } else{
+        cb(null, rows)
+      }
+    })
   }
 
   static login(uname, pass ,cb) {
-    let query = ` UPDATE employees SET login = 1 WHERE username = "${uname}" AND password = "${pass}" `
+    let query = ` UPDATE employees SET login = 1 WHERE password = "${pass}" `
 
-    db.get(`SELECT * FROM employees WHERE username = "${uname}" AND password = "${pass}"` , function(err, rows) {
+    Employee.getOne({field : 'login' , value: 1} , function(err, rows){
       if(err){
         cb(err)
       } else {
-        Employee.execute(query , function(err) {
-          if(err) {
-            cb(err)
-          } else {
-            cb(null , rows)
-          }
-        })
+        if(rows !== undefined) {
+          cb('Log out first')
+        } else {
+          Employee.getOne({field:"username", value: `${uname}`}, function(err, rows) {
+            if(err){
+              cb(err)
+            } else {
+              if (rows == undefined) {
+                cb(`username salah`)
+              } else {
+                if (rows.password == pass) {
+                  Employee.execute(query, function(err){
+                    if(err) {
+                      cb(err)
+                    } else {
+                      cb(null, rows)
+                    }
+                  })
+                } else {
+                  cb(`password salah`)
+                }
+              }
+            }
+          } )
+        }
       }
-    } )
+    })
+    db.close()
   }
 
+  static cekDokter(cb) {
+    Employee.getOne({field: "login", value:1} , function(err, rows) {
+      if(err) {
+        cb(err)
+      } else {
+          if(rows == undefined) {
+            cb(`login first`)
+          } else {
+            if(rows.position !== "dokter") {
+              cb(`You don't have access`)
+            } else {
+              cb(null)
+            }
+          }
+      }
+    })
+  }
+
+  static logout(uname , cb){
+    Employee.getOne({field: "username" ,value:uname} , function(err, rows) {
+      if(err){
+        cb(err)
+      } else {
+        if(rows == undefined) {
+          cb(`Anda tidak login`)
+        } else {
+          Employee.execute(`UPDATE employees SET login = 0 WHERE username = "${uname}"` , function(err){
+            if(err){
+              cb(err)
+            } else {
+              cb(null, rows)
+            }
+          })
+        }
+      }
+    })
+  }
+  
 }
 
 module.exports = Employee
