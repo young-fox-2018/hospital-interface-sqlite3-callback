@@ -78,7 +78,7 @@ class Controller {
                             name: name,
                             diseases: diseases
                         }
-                        Employee.addPatient(newPatient, (err, data) => {
+                        Patient.addPatient(newPatient, (err, data) => {
                             if (err) {
                                 View.showError(err)
                             } else {
