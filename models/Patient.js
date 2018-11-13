@@ -27,6 +27,8 @@ class Patient {
       db.run(query, function(err){
         if(err){
           callback(err)
+        } else{
+          callback(null)
         }
       })
   }
