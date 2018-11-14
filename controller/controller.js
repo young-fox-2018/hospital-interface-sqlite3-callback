@@ -1,5 +1,5 @@
-const Model = require('/Users/admin/Documents/Phase 1/Week 3/hospital-interface-sqlite3-callback/model/model.js')
-const View = require('/Users/admin/Documents/Phase 1/Week 3/hospital-interface-sqlite3-callback/view/View.js')
+const Model = require('../model/model.js')
+const View = require('../view/View.js')
 
 class Controller {
     static register(name, role, username, password, isLogin) {
@@ -38,20 +38,62 @@ class Controller {
             username: username,
             password: password
         }
-        Model.login(input, function(err) {
+
+        Model.findOne({
+            field: 'username', value: input.username
+        }, function(err, row) {
             if(err) {
-                View.displayErrorLogin(err)
+                View.displayError(err)
             } else {
-                View.displaySuccessLogin('user logged in successfully')
+                if(row === undefined) {
+                    View.displayError('username not found')
+                } else {
+                    Model.findOne({
+                        field: 'password', value: input.password
+                    }, function(err, row) {
+                        if(err) {
+                            View.displayError(err)
+                        } else {
+                            if(row === undefined) {
+                                View.displayError('username / password not found')
+                            } else {
+                                let data = {id: row.id, field: 'isLogin', value: 1}
+                                Model.updateData(data, function(err, data) {
+                                    if(err) {
+                                        View.displayError('failed log in')
+                                    } else {
+                                        View.displaySuccess('sukses log in')
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
             }
         })
     }
     static logout(username) {
-        Model.logout(username, function(err, data) {
+        Model.findOne({
+            field: 'isLogin', value: 1
+        }, function(err, row) {
             if(err) {
-                View.displayErrorLogin(err)
+                View.displayError(err)
             } else {
-                View.displaySuccessLogin('user logged out successfully')
+                if(row === undefined) {
+                    View.displayError('tidak ada yang sedang log in')
+                } else {
+                    let data = {
+                        id: row.id, 
+                        field: 'isLogin', 
+                        value: 0}
+                    Model.updateData(data, function(err, data) {
+                        if(err) {
+                            View.displayError('failed log out')
+                        } else {
+                            View.displaySuccess('sukses log out')
+                        }
+                  })  
+                }
             }
         })
     }

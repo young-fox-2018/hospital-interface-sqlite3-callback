@@ -5,12 +5,6 @@ class View {
     static displaySuccess(msg) {
         console.log(msg)
     }
-    static displayErrorLogin(err) {
-        console.log(err)
-    }
-    static displaySuccessLogin(msg) {
-        console.log(msg)
-    }
     static displayErrorAddPatient(err) {
         console.log(err)
     }
