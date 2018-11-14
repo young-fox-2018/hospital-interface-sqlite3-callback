@@ -22,97 +22,55 @@ class Employee {
         })
     }
 
-    static update(id, field, newValue, callback) {
-          Employee.findById(id, function(err, data){
+    static update(id, options, callback) {
+            let query = `UPDATE Employees SET `
+            for (const key in options) {
+                if (options.hasOwnProperty(key)) {
+                    const element = options[key];
+                    query += key; query += " = "; query += `"${element}"`; query += " , " 
+                }
+            }
+            query = query.slice(0, query.length - 2)
+            query += `WHERE id = ${id};`
+            db.run(query, function(err) {
                 if (err) callback(err, null)
                 else {
-                    let updatedData = new Employee(data[0].name, data[0].position, data[0].name, data[0].password)
-                    for (const key in updatedData) {
-                      if (updatedData.hasOwnProperty(key)) {
-                        const element = updatedData[key];
-                        if (key == field) {
-                            updatedData[key] = newValue
-                        }
-                      }
-                    }
-                       
-                    let query = `UPDATE Employees SET 
-                                name = "${updatedData.name}", 
-                                position = "${updatedData.position}", 
-                                username = "${updatedData.username}", 
-                                password = "${updatedData.password}", 
-                                isLogin = "${updatedData.isLogin}"
-                                WHERE id = ${id};
-                                `
-                    db.run(query, function(err) {
+                  Employee.find("Employees", function(err, data) {
                         if (err) callback(err, null)
                         else {
-                          callback(null, updatedData)
+                            if (data.length >= id) callback(null, "Successfully updated data")
+                            else {
+                                callback("id not found", null)
+                            }
                         }
-                    })
+                  })
                 }
-          })
+            })
     }
-
-    static findAll(callback) {
-        let query = `SELECT * FROM Employees`
+  
+    static find(table, callback) {
+        let query = `SELECT * FROM ${table}`
         db.all(query, function(err, row) {
             if (err) callback(err, null)
             callback(null, row)
         })
     }
 
-    static findById(id, callback) {
-        let query = `SELECT * FROM Employees WHERE id = ${id}`
-        db.all(query, function(err,row) {
+    static findOne(table, options, callback) {
+        let query = `SELECT * FROM ${table} WHERE `
+        for (let key in options) {
+            if (options.hasOwnProperty(key)) {
+                let element = options[key];
+                query += key 
+                query += " = "
+                query += `"${element}"`
+                query += " AND "
+            }
+        }
+        query = query.slice(0,query.length - 5)
+        db.get(query, function(err,row) {
             if (err) callback(err, null)
             callback(null, row)
-        })
-    }
-
-    static login(username, password, callback) {
-          Employee.findAll(function(err, data) {
-            if (err) callback(err, null) // jgn di console log nnti
-            else {
-                let isLoginState = false
-                let id = null
-                data.forEach(employee => {
-                    if (employee.name == username && employee.password == password) {
-                        id = employee.id
-                    } 
-                    else if (employee.isLogin == 1) {
-                        isLoginState = true
-                    }             
-                });
-                if (isLoginState == false) {
-                      if (id != null) {
-                        Employee.update(id, "isLogin", 1, function(err, updatedData){
-                            if (err) callback(err, null)
-                            else {
-                              callback(null, updatedData)
-                            }
-                        })
-                      } else {
-                          callback("Id not found", null)
-                      }
-                } else {
-                      callback("another user has logged in, logged out first", null)
-                }
-            }
-          })
-    }
-
-    static logout(callback) {
-        Employee.findAll(function(err, data) {
-            if (err) callback(err, null)
-            else {
-                data.forEach(employee => {
-                    Employee.update(employee.id, "isLogin", 0, function(err, data) {
-                          if (err) callback(err, null)
-                    })
-                });
-                callback(null, "successfully logout")
-            }
         })
     }
 
@@ -151,3 +109,6 @@ class Employee {
 
   
 module.exports = Employee
+
+
+

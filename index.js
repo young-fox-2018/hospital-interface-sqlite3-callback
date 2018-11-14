@@ -12,14 +12,14 @@ switch (argv[0]) {
     case "addEmployee":
         Controller.addEmployee(argv[1], argv[2], argv[3])
         break;
-    case "updateEmployee":
-        Controller.updateEmployee(argv[1], argv[2], argv[3])
+    case "update":
+        Controller.update(argv[1])
         break;
-    case "findById":
-        Controller.findById(argv[1])
+    case "findOne":
+        Controller.findOne(argv[1])
         break;
-    case "findAll":
-        Controller.findAll() 
+    case "find":
+        Controller.find(argv[1]) 
         break;
     case "login":
         Controller.login(argv[1], argv[2])
@@ -33,3 +33,5 @@ switch (argv[0]) {
     default:
         break;
 }
+
+// Notes: di argv ga perlu ada findOne sma find, ditaro disitu cuman untuk memudahkan cek fitur
